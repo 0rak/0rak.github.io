@@ -15,40 +15,86 @@
       --radius: 16px;
     }
     * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; } /* 부드러운 스크롤 기본 적용 */
     html, body { margin: 0; padding: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; color: var(--text); background: radial-gradient(1200px 800px at 10% -20%, #1b2630 0, rgba(0,0,0,0) 60%), var(--bg); }
     a { color: inherit; text-decoration: none; }
     img { max-width: 100%; display: block; }
     .container { width: 100%; max-width: 1080px; margin: 0 auto; padding: 0 16px; }
-    header { position: sticky; top: 0; backdrop-filter: blur(8px); background: rgba(11,11,12,0.6); border-bottom: 1px solid #1f1f22; z-index: 10; }
+    header { position: sticky; top: 0; backdrop-filter: blur(8px); background: rgba(11,11,12,0.6); border-bottom: 1px solid #1f1f22; z-index: 10; transition: all 0.3s; }
     .nav { height: 64px; display: flex; align-items: center; justify-content: space-between; }
     .brand { font-weight: 700; letter-spacing: 0.2px; }
-    .links a { margin-left: 16px; color: var(--muted); }
+    .links a { margin-left: 16px; color: var(--muted); transition: color 0.3s; }
     .links a:hover { color: var(--text); }
+    
     .hero { padding: 56px 0 24px; display: grid; grid-template-columns: 1.1fr 1fr; gap: 24px; }
     .hero h1 { font-size: clamp(28px, 4vw, 44px); margin: 0 0 8px; }
     .muted { color: var(--muted); }
+    
     .panel { background: linear-gradient(180deg, #151518, #101012); border: 1px solid #26262b; border-radius: var(--radius); box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
     .panel .pad { padding: 14px; }
     .video { aspect-ratio: 16/9; width: 100%; border: none; border-radius: calc(var(--radius) - 6px); }
+    
     .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    
+    /* [업그레이드 1] 스크롤 리빌 애니메이션 스타일 */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+    }
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     .card { overflow: hidden; transition: transform .2s ease, box-shadow .2s ease; cursor: pointer; }
     .thumb { aspect-ratio: 16/9; width: 100%; object-fit: cover; display: block; }
-    .card:hover { transform: translateY(-2px); box-shadow: 0 14px 36px rgba(0,0,0,0.35); }
+    .card:hover { transform: translateY(-5px); box-shadow: 0 14px 36px rgba(0,0,0,0.35); } /* 호버 효과 강화 */
     .card h3 { font-size: 16px; margin: 10px 0 4px; font-weight: 600; }
+    
     .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
     .tag { font-size: 12px; color: var(--muted); border: 1px solid #2a2a30; padding: 2px 8px; border-radius: 999px; }
+    
     .about, .contact { margin: 60px 0; }
     footer { color: var(--muted); border-top: 1px solid #1f1f22; padding: 18px 0 60px; }
+    
+    /* [업그레이드 2] Top 버튼 스타일 */
+    #topBtn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 99;
+      border: none;
+      outline: none;
+      background-color: #26262b;
+      color: white;
+      cursor: pointer;
+      padding: 15px;
+      border-radius: 50%;
+      font-size: 18px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    #topBtn:hover { background-color: #555; transform: translateY(-3px); }
+    #topBtn.show { opacity: 1; visibility: visible; }
+
     @media (max-width: 920px) { .hero { grid-template-columns: 1fr; } .grid { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 560px) { .links { display: none; } .grid { grid-template-columns: 1fr; } }
+    
     /* simple modal */
-    .modal { position: fixed; inset: 0; display: none; background: rgba(0,0,0,.8); align-items: center; justify-content: center; padding: 16px; z-index: 50; }
-    .modal.open { display: flex; }
-    .modal .frame { width: min(100%, 960px); aspect-ratio: 16 / 9; background: #000; border-radius: 12px; overflow: hidden; }
-    .close { position: absolute; top: 12px; right: 16px; font-size: 28px; color: #fff; cursor: pointer; }
+    .modal { position: fixed; inset: 0; display: none; background: rgba(0,0,0,.8); align-items: center; justify-content: center; padding: 16px; z-index: 50; backdrop-filter: blur(5px); }
+    .modal.open { display: flex; animation: fadeIn 0.3s; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal .frame { width: min(100%, 960px); aspect-ratio: 16 / 9; background: #000; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+    .close { position: absolute; top: 12px; right: 16px; font-size: 28px; color: #fff; cursor: pointer; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
   </style>
 </head>
 <body>
+  
+  <button onclick="topFunction()" id="topBtn" title="Go to top">↑</button>
+
   <header>
     <div class="container nav">
       <a class="brand" href="#top">0rak | 정태현</a>
@@ -61,7 +107,7 @@
   </header>
 
   <main class="container" id="top">
-    <section class="hero">
+    <section class="hero reveal">
       <div>
         <h1>Cinematographer | Filmmaker</h1>
         <p class="muted">렌즈로 이야기를 쓰며, 감정을 포착하다.<br>모든 프레임에 생동감을 불어넣는 촬영과 색보정.</p>
@@ -72,81 +118,83 @@
         </div>
       </div>
       <div class="panel"><div class="pad">
-        <!-- 대표 영상: 유튜브/비메오 ID만 바꾸면 됩니다 -->
         <iframe class="video" src="https://www.youtube.com/embed/2cXzgeiXL3o?rel=0&modestbranding=1" title="Showreel" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
       </div></div>
     </section>
 
     <section id="work" style="margin: 28px 0 46px;">
-      <h2 style="margin: 0 0 16px;">Selected Work</h2>
+      <h2 style="margin: 0 0 16px;" class="reveal">Selected Work</h2>
       <div class="grid">
-        <!-- 카드 1 -->
-        <article class="panel card" data-type="youtube" data-id="O8FYXI2Gy2A">
-  <img class="thumb" src="https://github.com/0rak/0rak.github.io/blob/main/images/1.jpg?raw=true" alt="그때우리는 썸네일" />
-  <div class="pad">
-    <h3>그때우리는</h3>
-    <div class="row"><span class="muted">Director · Edit · Color · DoP · 2024</span></div>
-    <div class="row" style="margin-top:8px"><span class="tag">로맨스</span><span class="tag">코미디</span></div>
-  </div>
-</article>
-        <!-- 카드 2 -->
-        <article class="panel card" data-type="youtube" data-id="a1L7mneu4co">
+        <article class="panel card reveal" data-type="youtube" data-id="O8FYXI2Gy2A">
+          <img class="thumb" src="https://github.com/0rak/0rak.github.io/blob/main/images/1.jpg?raw=true" alt="그때우리는 썸네일" />
+          <div class="pad">
+            <h3>그때우리는</h3>
+            <div class="row"><span class="muted">Director · Edit · Color · DoP · 2024</span></div>
+            <div class="row" style="margin-top:8px"><span class="tag">로맨스</span><span class="tag">코미디</span></div>
+          </div>
+        </article>
+
+        <article class="panel card reveal" data-type="youtube" data-id="a1L7mneu4co">
           <img class="thumb" src="https://github.com/0rak/0rak.github.io/blob/main/images/2.jpg?raw=true" alt="이 별 썸네일" />
           <div class="pad">
             <h3>이 별</h3>
             <div class="row"><span class="muted">Director · DoP · Color · 2024</span></div>
-            <div class="row" style="margin-top:8px"><span class="tag">로맨스</span>
+            <div class="row" style="margin-top:8px"><span class="tag">로맨스</span></div>
           </div>
         </article>
-        <!-- 카드 3 -->
-        <article class="panel card" data-type="youtube" data-id="Rdln30Y_3l8">
+
+        <article class="panel card reveal" data-type="youtube" data-id="Rdln30Y_3l8">
           <img class="thumb" src="https://github.com/0rak/0rak.github.io/blob/main/images/3.jpg?raw=true" alt="뷰티아웃사이드 썸네일" />
           <div class="pad">
             <h3>뷰티아웃사이드</h3>
             <div class="row"><span class="muted">Edit · DoP · Performer · 2024</span></div>
-            <div class="row" style="margin-top:8px"><span class="tag">예능</span>
+            <div class="row" style="margin-top:8px"><span class="tag">예능</span></div>
           </div>
         </article>
-       <!-- 카드 4 -->
-        <article class="panel card" data-type="youtube" data-id="n1Vg45aRbVw">
+
+        <article class="panel card reveal" data-type="youtube" data-id="n1Vg45aRbVw">
           <img class="thumb" src="https://github.com/0rak/0rak.github.io/blob/main/images/4.jpg?raw=true" alt="언제나좋아해 썸네일" />
           <div class="pad">
             <h3>한 끗 차이 ㅣ 언제나,좋아해</h3>
             <div class="row"><span class="muted"> DoP · 2024</span></div>
-            <div class="row" style="margin-top:8px"><span class="tag">공익광고</span>
+            <div class="row" style="margin-top:8px"><span class="tag">공익광고</span></div>
           </div>
         </article>   
-         <!-- 카드 5 -->
-        <article class="panel card" data-type="youtube" data-id="gHn8kX5L1BQ">
+
+        <article class="panel card reveal" data-type="youtube" data-id="gHn8kX5L1BQ">
           <img class="thumb" src="https://github.com/0rak/0rak.github.io/blob/main/images/5.jpg?raw=true" alt="사랑해보고싶다 썸네일" />
           <div class="pad">
             <h3>한 끗 차이 ㅣ 사랑해,보고싶다</h3>
             <div class="row"><span class="muted"> DoP · 2024</span></div>
-            <div class="row" style="margin-top:8px"><span class="tag">공익광고</span>
+            <div class="row" style="margin-top:8px"><span class="tag">공익광고</span></div>
           </div>
         </article>
-         <!-- 카드 6 -->
-        <article class="panel card" data-type="youtube" data-id="LEaI0vLc6y8">
-          <img class="thumb" src="https://github.com/0rak/0rak.github.io/blob/main/images/6.jpg?raw=true" alt="언제나좋아해 썸네일" />
+
+        <article class="panel card reveal" data-type="youtube" data-id="LEaI0vLc6y8">
+          <img class="thumb" src="https://github.com/0rak/0rak.github.io/blob/main/images/6.jpg?raw=true" alt="밤새운거야 썸네일" />
           <div class="pad">
             <h3>한 끗 차이 ㅣ 밤새,운거야</h3>
             <div class="row"><span class="muted"> DoP · 2024</span></div>
-            <div class="row" style="margin-top:8px"><span class="tag">공익광고</span>
+            <div class="row" style="margin-top:8px"><span class="tag">공익광고</span></div>
           </div>
         </article>
       </div>
     </section>
 
-    <section id="about" class="about">
+    <section id="about" class="about reveal">
       <h2>About</h2>
       <p class="muted">정태현 — 촬영 위주의 영상 제작자.<br>
         단편영화, 브랜드 필름, 뮤직비디오를 만듭니다.</p>
     </section>
 
-    <section id="contact" class="contact panel">
+    <section id="contact" class="contact panel reveal">
       <div class="pad">
         <h2>Contact</h2>
-       <p class="muted">Email: <a href="mailto:hello@example.com">0rakroom2341@gmail.com</a> · Youtube: <a href="https://www.youtube.com/@%EC%98%A4%EB%9D%BD%EC%9D%B4" target="_blank" rel="noreferrer">@오락이</a></p>
+        <p class="muted">Email: <a href="mailto:0rakroom2341@gmail.com">0rakroom2341@gmail.com</a> · Youtube: <a href="https://www.youtube.com/@%EC%98%A4%EB%9D%BD%EC%9D%B4" target="_blank" rel="noreferrer">@오락이</a></p>
+      </div>
+    </section>
+  </main>
+
   <footer>
     <div class="container">
       © <span id="y"></span> Jung Taehyun. All rights reserved.
@@ -161,16 +209,59 @@
   </div>
 
   <script>
-    // 연도
+    // 1. 연도 자동 업데이트
     document.getElementById('y').textContent = new Date().getFullYear();
-    // 비디오 모달
+
+    // 2. [업그레이드] 스크롤 리빌 효과 (Intersection Observer 활용)
+    // 강의에서 배운 반복문(forEach)과 조건 처리를 최신 방식으로 적용
+    const revealElements = document.querySelectorAll(".reveal");
+
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("active");
+          // 한번 나타나면 관찰 중지 (계속 깜빡이는 것 방지)
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      root: null,
+      threshold: 0.15, // 15% 정도 보일 때 나타남
+      rootMargin: "0px"
+    });
+
+    revealElements.forEach(el => {
+      revealObserver.observe(el);
+    });
+
+    // 3. [업그레이드] Top 버튼 기능
+    const topBtn = document.getElementById("topBtn");
+
+    window.onscroll = function() {scrollFunction()};
+
+    function scrollFunction() {
+      // 스크롤이 100px 이상 내려가면 버튼 표시
+      if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+        topBtn.classList.add("show");
+      } else {
+        topBtn.classList.remove("show");
+      }
+    }
+
+    function topFunction() {
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+
+    // 4. 비디오 모달 기능 (기존 유지)
     const modal = document.getElementById('modal');
     const player = document.getElementById('player');
     const closeBtn = document.getElementById('close');
+
     document.querySelectorAll('.card').forEach(card => {
       card.addEventListener('click', () => {
         const type = card.dataset.type;
         const id = card.dataset.id;
+        // 유튜브일 경우
         const src = type === 'youtube'
           ? `https://www.youtube.com/embed/${id}?autoplay=1&rel=0&modestbranding=1`
           : `https://player.vimeo.com/video/${id}?autoplay=1&title=0&byline=0&portrait=0`;
@@ -178,17 +269,11 @@
         modal.classList.add('open');
       });
     });
+
     const close = () => { modal.classList.remove('open'); player.src = ''; };
     modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
     closeBtn.addEventListener('click', close);
   </script>
 
-  <!-- 사용법
-    1) "Your Name", 소개 문구, 연락처를 바꾸세요.
-    2) 대표 영상: iframe src 끝의 유튜브 ID(dQw4w9WgXcQ)를 본인 영상 ID로 교체.
-    3) 작품 카드: article.panel.card 블록을 복사해서 늘리고 data-id에 유튜브/비메오 ID를 넣으세요.
-    4) 썸네일은 picsum.photos 대신 직접 이미지 URL을 넣으세요.
-    5) 저장 후 커밋하면 GitHub Pages가 갱신됩니다.
-  -->
 </body>
 </html>
